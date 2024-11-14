@@ -66,7 +66,7 @@ func Export(unitName string, serviceType string) error {
 		//先创建output目录
 		_ = os.MkdirAll(dataDir, 0750)
 	}
-	filename := fmt.Sprintf("%s_ICP_%s.xlsx", unitName, utils.GenFilenameTimestamp())
+	filename := fmt.Sprintf("%s_%d.xlsx", unitName, utils.GenUnixTimestamp())
 	outputAbsFilepath := filepath.Join(dataDir, filename)
 
 	// var client *miit.ICP
@@ -92,7 +92,7 @@ func Export(unitName string, serviceType string) error {
 	}
 	result, err = client.PageNum(1).PageSize(result.Total).ServiceType(serviceType).Query(unitName)
 	// result, err = client.PageNum(1).PageSize(10).ServiceType("1").Query(unitName)
-	// todo 保存所有 域名信息到 temp目录，以 unitName 命名
+	// 保存所有 域名信息到 temp目录，以 unitName 命名
 	if err != nil {
 		logger.Info(err.Error())
 		return err
@@ -100,6 +100,9 @@ func Export(unitName string, serviceType string) error {
 	res, _ := json.Marshal(result)
 	logger.Info(string(res))
 	// fmt.Println(string(res))
+
+	// 保存至 temp 目录
+	utils.SaveToTempfile(unitName, result)
 
 	items = append(items, result.Items...)
 	var data [][]any

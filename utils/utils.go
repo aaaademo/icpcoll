@@ -2,8 +2,10 @@ package utils
 
 import (
 	"fmt"
+	"icpcoll/api/miit"
 	"icpcoll/logger"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -53,6 +55,11 @@ func GenTimestampOutput() string {
 	return formattedTime
 }
 
+// GenUnixTimestamp 获取当前 Unix 时间戳（以秒为单位）
+func GenUnixTimestamp() int64 {
+	return time.Now().Unix()
+}
+
 func HtmlHasID(n *html.Node, id string) bool {
 	for _, attr := range n.Attr {
 		if attr.Key == "id" && attr.Val == id {
@@ -72,8 +79,41 @@ func columnNumberToName(n int) string {
 	return name
 }
 
-// todo
-func SaveToTempfile() error {
+func SaveToTempfile(unitName string, result *miit.Result) error {
+	tempDir := "temp"
+	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
+		//先创建temp目录
+		_ = os.MkdirAll(tempDir, 0750)
+	}
+	tempDirFull, _ := filepath.Abs(tempDir)
+	tempFile := filepath.Join(tempDirFull, unitName+".txt")
+	// fmt.Println(tempFile)
+
+	// 提取所有 serviceName
+	serviceNames := make([]string, 0)
+	for _, item := range result.Items {
+		serviceNames = append(serviceNames, item.ServiceName)
+	}
+
+	// 打印所有 serviceName
+	// fmt.Printf("========= %s ===========\n", unitName)
+	for _, serviceName := range serviceNames {
+		if serviceName == "" {
+			return nil
+		}
+		fmt.Println(serviceName)
+		file, err := os.OpenFile(tempFile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+		if err == nil {
+			defer file.Close()
+		}
+		output := fmt.Sprintf("%s\n", serviceName)
+		// fmt.Printf(output)
+		_, err = file.WriteString(output)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+	// fmt.Println("========================")
 	return nil
 }
 

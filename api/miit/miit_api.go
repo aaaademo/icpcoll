@@ -26,16 +26,6 @@ type Image struct {
 	WordCount  int    `json:"wordCount"`
 }
 
-type Item struct {
-	ServiceName      string `json:"serviceName"`
-	LeaderName       string `json:"leaderName"`
-	NatureName       string `json:"natureName"`
-	ServiceLicence   string `json:"serviceLicence"`
-	UnitName         string `json:"unitName"`
-	UpdateRecordTime string `json:"updateRecordTime"`
-	ServiceType      string `json:"serviceType"`
-}
-
 var (
 	IllegalRequestError  = errors.New("请求非法,已阻止,请及时刷新页面")
 	TokenExpiredError    = errors.New("token过期,请及时刷新页面")
@@ -77,6 +67,16 @@ type Result struct {
 	PageSize int     `json:"pageSize"`
 	Total    int     `json:"total"`
 	Items    []*Item `json:"items"`
+}
+
+type Item struct {
+	ServiceName      string `json:"serviceName"`
+	LeaderName       string `json:"leaderName"`
+	NatureName       string `json:"natureName"`
+	ServiceLicence   string `json:"serviceLicence"`
+	UnitName         string `json:"unitName"`
+	UpdateRecordTime string `json:"updateRecordTime"`
+	ServiceType      string `json:"serviceType"`
 }
 
 func NewClient() *ICP {
